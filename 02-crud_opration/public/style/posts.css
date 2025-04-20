@@ -1,0 +1,10 @@
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background-color: violet;
+  margin-top: 10px;
+  width: 200px;
+}

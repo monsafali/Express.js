@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Posts</title>
+    <link rel="stylesheet" href="style/posts.css" />
+  </head>
+  <body>
+    <h1>Posts</h1>
+    <div>
+      <div class="item">
+        <% posts.forEach(post => { %>
+
+        <h2><%= post.name %></h2>
+        <p><%= post.Description %></p>
+        <a href="/post/<%=post.id %>">see in detail</a>
+        <% }) %>
+      </div>
+    </div>
+
+    <a href="http://localhost:3000/post/new">Add new</a>
+  </body>
+</html>
