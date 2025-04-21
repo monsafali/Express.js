@@ -55,6 +55,14 @@ app.get("/post/:id/edit", (req, res) => {
   let post = posts.find((post) => post.id === id);
   res.render("Update.ejs", { post });
 });
+
+app.delete("/post/:id", (req, res) => {
+  let { id } = req.params;
+  posts = posts.filter((post) => post.id !== id);
+  res.redirect("/post");
+});
+
+
 app.listen(port, () => {
   console.log("Server successfuly started");
 });

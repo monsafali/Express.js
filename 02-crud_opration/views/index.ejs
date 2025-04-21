@@ -16,6 +16,9 @@
         <p><%= post.Description %></p>
         <a href="/post/<%=post.id %>">see in detail</a>
         <a href="/post/<%=post.id %>/edit">edit</a>
+        <form action="/post/<%= post.id %>?_method=DELETE" method="POST">
+          <button>DELETE</button>
+        </form>
         <% }) %>
       </div>
     </div>
