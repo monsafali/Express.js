@@ -1,0 +1,13 @@
+body {
+  margin-left: 20px;
+}
+
+.msg {
+  background-color: rgb(223, 156, 11);
+  padding: 20px;
+}
+
+.chat {
+  background-color: azure;
+  display: inline-block;
+}
