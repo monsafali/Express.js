@@ -8,6 +8,7 @@ const engine = require("ejs-mate");
 const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
+const { listingSchema } = require("./schema.js");
 main()
   .then(() => {
     console.log("connected to DB");
@@ -26,6 +27,25 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(methodOverride("_method"));
+
+// const validateListing = (req, res, next) => {
+//   let { error } = listingSchema.validate(req.body);
+//   if (error) {
+//     let errMsg = error.details.map((el) => el.message).join(",");
+//     throw new ExpressError(400, errMsg);
+//   } else {
+//     next();
+//   }
+// };
+const validateListing = (req, res, next) => {
+  console.log(req.body);
+  const { error } = listingSchema.validate(req.body, { abortEarly: false });
+  if (error) {
+    const errMsg = error.details.map((el) => el.message).join(", ");
+    throw new ExpressError(400, errMsg);
+  }
+  next();
+};
 
 app.get("/", (req, res) => {
   res.send("Hi, I am root");
@@ -58,24 +78,9 @@ app.get(
 //Create Route
 app.post(
   "/listings",
+  validateListing,
   wrapAsync(async (req, res, next) => {
-    if (!req.body.listing) {
-      throw new ExpressError(404, "Page not found");
-    }
-
     const newListing = new Listing(req.body.listing);
-
-    if (!newListing.description) {
-      throw new ExpressError(404, "Description is missing");
-    }
-
-    if (!newListing.title) {
-      throw new ExpressError(404, "title is missing");
-    }
-
-    if (!newListing.description) {
-      throw new ExpressError(404, "Description is missing");
-    }
     await newListing.save();
     res.redirect("/listings");
   })
@@ -94,6 +99,7 @@ app.get(
 //Update Route
 app.put(
   "/listings/:id",
+  validateListing,
   wrapAsync(async (req, res) => {
     let { id } = req.params;
     await Listing.findByIdAndUpdate(id, { ...req.body.listing });

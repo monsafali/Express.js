@@ -1,1 +1,17 @@
- 
+const Joi = require("joi");
+
+module.exports.listingSchema = Joi.object({
+  listing: Joi.object({
+    title: Joi.string().required(),
+    description: Joi.string().required(),
+    price: Joi.number().required().min(0),
+    location: Joi.string().required(),
+    country: Joi.string().optional(),
+
+    // Fix here: nested object schema for image
+    image: Joi.object({
+      filename: Joi.string().allow("", null),
+      url: Joi.string().uri().allow("", null),
+    }).optional(),
+  }).required(),
+});
