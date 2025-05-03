@@ -8,7 +8,7 @@ const engine = require("ejs-mate");
 const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
-const { listingSchema } = require("./schema.js");
+const { listingSchema, reviewSchema } = require("./schema.js");
 const Review = require("./models/review.js");
 main()
   .then(() => {
@@ -39,6 +39,16 @@ const validateListing = (req, res, next) => {
   next();
 };
 
+const validateReview = (req, res, next) => {
+  console.log(req.body);
+  const { error } = reviewSchema.validate(req.body, { abortEarly: false });
+  if (error) {
+    const errMsg = error.details.map((el) => el.message).join(", ");
+    throw new ExpressError(400, errMsg);
+  }
+  next();
+};
+
 app.get("/", (req, res) => {
   res.send("Hi, I am root");
 });
@@ -62,7 +72,7 @@ app.get(
   "/listings/:id",
   wrapAsync(async (req, res) => {
     let { id } = req.params;
-    const listing = await Listing.findById(id);
+    const listing = await Listing.findById(id).populate("reviews");
     res.render("listings/show.ejs", { listing });
   })
 );
@@ -113,17 +123,21 @@ app.delete(
 // Rivews
 // Post Route
 
-app.post("/listings/:id/reviews", async (req, res) => {
-  let listing = await Listing.findById(req.params.id);
-  let newReview = new Review(req.body.review);
+app.post(
+  "/listings/:id/reviews",
+  validateReview,
+  wrapAsync(async (req, res) => {
+    let listing = await Listing.findById(req.params.id);
+    let newReview = new Review(req.body.review);
 
-  listing.reviews.push(newReview);
-  await newReview.save();
-  await listing.save();
+    listing.reviews.push(newReview);
+    await newReview.save();
+    await listing.save();
 
-  console.log("new review saved");
-  res.redirect(`/listings/${listing._id}`);
-});
+    console.log("new review saved");
+    res.redirect(`/listings/${listing._id}`);
+  })
+);
 
 app.all("*", (req, res, next) => {
   next(new ExpressError(404, "Page Not found"));
