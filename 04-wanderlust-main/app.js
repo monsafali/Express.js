@@ -12,6 +12,19 @@ const { listingSchema, reviewSchema } = require("./schema.js");
 const Review = require("./models/review.js");
 const listing = require("./routes/listings.js");
 const review = require("./routes/reviews.js");
+const session = require("express-session");
+const flash = require("connect-flash");
+
+const sessionOptions = {
+  secret: "mysupersecretstring",
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    expires: Date.now() + 7 * 24 * 60 * 1000,
+    maxAge: 7 * 24 * 60 * 1000,
+    httpOnly: true,
+  },
+};
 
 main()
   .then(() => {
@@ -31,7 +44,14 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(methodOverride("_method"));
+app.use(session(sessionOptions));
+app.use(flash());
 
+app.use((req, res, next) => {
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+  next();
+});
 app.use("/listings", listing);
 app.use("/listings/:id/reviews", review);
 
