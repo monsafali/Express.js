@@ -10,8 +10,9 @@ const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
 const { listingSchema, reviewSchema } = require("./schema.js");
 const Review = require("./models/review.js");
-const listing = require("./routes/listings.js");
-const review = require("./routes/reviews.js");
+const listingRouter = require("./routes/listings.js");
+const reviewRouter = require("./routes/reviews.js");
+const userRouter = require("./routes/user.js");
 const session = require("express-session");
 const flash = require("connect-flash");
 const passport = require("passport");
@@ -61,8 +62,18 @@ app.use((req, res, next) => {
   res.locals.error = req.flash("error");
   next();
 });
-app.use("/listings", listing);
-app.use("/listings/:id/reviews", review);
+app.use("/listings", listingRouter);
+app.use("/listings/:id/reviews", reviewRouter);
+app.use("/", userRouter);
+
+app.get("/demouser", async (req, res) => {
+  let fakeUser = new User({
+    email: "Student@gmail.com",
+    username: "monsaf",
+  });
+  let registerdUser = await User.register(fakeUser, "abc");
+  res.send(registerdUser);
+});
 
 app.all("*", (req, res, next) => {
   next(new ExpressError(404, "Page Not found"));
