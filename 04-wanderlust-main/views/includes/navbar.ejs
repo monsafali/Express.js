@@ -17,6 +17,21 @@
         <a class="nav-link active" aria-current="page" href="/listings">Home</a>
         <a class="nav-link" href="/listings/new">add new</a>
       </div>
+
+      <!-- <div class="navbar-nav ms-auto">
+        <a class="nav-link" href="/signup">Sign up</a>
+        <a class="nav-link" href="/login">log in</a>
+        <a class="nav-link" href="/logout">logout</a>
+      </div> -->
+
+      <div class="navbar-nav ms-auto">
+        <% if(! currUser) {%>
+        <a class="nav-link" href="/signup"><b>Sign Up</b></a>
+        <a class="nav-link" href="/login"><b>Sign In</b></a>
+        <% } %> <% if(currUser) {%>
+        <a class="nav-link ms-auto" href="/logout"><b>Logout</b></a>
+        <% } %>
+      </div>
     </div>
   </div>
 </nav>

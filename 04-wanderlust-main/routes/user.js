@@ -16,8 +16,14 @@ router.post(
       const newUser = new User({ email, username });
       const registeedUser = await User.register(newUser, password);
       console.log(registeedUser);
-      req.flash("success", "user was registered successfuly");
-      res.redirect("/listings");
+      req.login(registeedUser, (err) => {
+        if (err) {
+          return next(err);
+        }
+
+        req.flash("success", "user was registered successfuly");
+        res.redirect("/listings");
+      });
     } catch (err) {
       req.flash("error", err.message);
       res.redirect("/signup");
@@ -40,4 +46,14 @@ router.post(
     res.redirect("/listings");
   }
 );
+
+router.get("/logout", (req, res, next) => {
+  req.logout((err) => {
+    if (err) {
+      return next(err);
+    }
+    req.flash("success", "your are logged out know");
+    res.redirect("/listings");
+  });
+});
 module.exports = router;
