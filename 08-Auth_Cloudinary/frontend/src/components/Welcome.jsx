@@ -42,6 +42,34 @@ const Welcome = () => {
   };
 
   // Submit image
+  // const handleUpload = async (e) => {
+  //   e.preventDefault();
+  //   if (!formData.imageFile) return alert("Select a file");
+
+  //   const data = new FormData();
+  //   data.append("name", formData.name);
+  //   data.append("tags", formData.tags);
+  //   data.append("email", user.email);
+  //   data.append("imageFile", formData.imageFile);
+
+  //   try {
+  //     setIsUploading(true);
+
+  //     const res = await axios.post("/api/v1/files/upload-image", data, {
+  //       withCredentials: true,
+  //     });
+
+  //     alert("Upload successful");
+  //     setImages((prev) => [...prev, res.data.file]);
+  //     setFormData({ name: "", tags: "", imageFile: null });
+  //   } catch (error) {
+  //     alert("Upload failed");
+  //     console.error(error);
+  //   } finally {
+  //     setIsUploading(false);
+  //   }
+  // };
+
   const handleUpload = async (e) => {
     e.preventDefault();
     if (!formData.imageFile) return alert("Select a file");
@@ -59,12 +87,51 @@ const Welcome = () => {
         withCredentials: true,
       });
 
-      alert("Upload successful");
-      setImages((prev) => [...prev, res.data.file]);
+      // Check if backend returns file or just success message
+      if (res.data?.file) {
+        alert("Upload successful");
+        setImages((prev) => [...prev, res.data.file]);
+      } else if (res.data?.files?.[0]) {
+        alert("Upload successful");
+        setImages((prev) => [...prev, res.data.files[0]]);
+      } else if (res.data?.fileId) {
+        alert("Upload successful");
+
+        // 🔥 Fetch the file by ID
+        const fileRes = await axios.get(`/api/v1/files/${res.data.fileId}`, {
+          withCredentials: true,
+        });
+
+        if (fileRes.data?.file) {
+          setImages((prev) => [...prev, fileRes.data.file]);
+        } else {
+          // If even the fetch fails, refresh images
+          const imgRes = await axios.get("/api/v1/files/user-images", {
+            params: { email: user.email },
+            withCredentials: true,
+          });
+          setImages(imgRes.data.files);
+        }
+      } else {
+        // Last fallback: refresh images
+        alert("image uploaded successfuly.");
+        const imgRes = await axios.get("/api/v1/files/user-images", {
+          params: { email: user.email },
+          withCredentials: true,
+        });
+        setImages(imgRes.data.files);
+      }
+
       setFormData({ name: "", tags: "", imageFile: null });
     } catch (error) {
-      alert("Upload failed");
       console.error(error);
+      if (error.response?.status === 401) {
+        alert("Session expired. Please login again.");
+        logout();
+        navigate("/login");
+      } else {
+        alert("Upload failed");
+      }
     } finally {
       setIsUploading(false);
     }
