@@ -1,0 +1,53 @@
+const mongoose = require("mongoose");
+
+const CourseSechema = new mongoose.Schema(
+  {
+    courseName: {
+      type: String,
+    },
+    courseDescription: {
+      type: String,
+    },
+    instructor: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    whatYouWillLearn: {
+      type: String,
+    },
+    courseContent: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Section",
+      },
+    ],
+    ratingAndReviews: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "RatingAndReview",
+      },
+    ],
+    price: {
+      type: Number,
+    },
+    thumbnail: {
+      type: String,
+    },
+    tag: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Tag",
+    },
+    studentsEnrolled: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+      },
+    ],
+  },
+  { timestamps: true }
+);
+
+const Course = mongoose.model("Course", CourseSechema);
+module.exports = Course;
