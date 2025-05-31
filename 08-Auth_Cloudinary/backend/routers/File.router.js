@@ -1,7 +1,10 @@
 import express from "express";
 import fileUpload from "express-fileupload";
-import { imageUploader, getUserImages } from "../controllers/File.Uploader.js";
-import File from "../model/File.model.js";
+import {
+  imageUploader,
+  getUserImages,
+  DeleteFile,
+} from "../controllers/File.Uploader.js";
 
 const router = express.Router();
 
@@ -11,13 +14,6 @@ router.use(fileUpload({ useTempFiles: true, tempFileDir: "/tmp/" }));
 // Routes
 router.post("/upload-image", imageUploader);
 router.get("/user-images", getUserImages);
-router.delete("/delete/:id", async (req, res) => {
-  try {
-    const deleted = await File.findByIdAndDelete(req.params.id);
-    res.json({ success: true, deleted });
-  } catch (error) {
-    res.status(500).json({ success: false, message: "Delete failed" });
-  }
-});
+router.delete("/delete/:id", DeleteFile);
 
 export default router;

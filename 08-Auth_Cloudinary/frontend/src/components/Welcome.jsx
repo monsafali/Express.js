@@ -41,35 +41,6 @@ const Welcome = () => {
     }
   };
 
-  // Submit image
-  // const handleUpload = async (e) => {
-  //   e.preventDefault();
-  //   if (!formData.imageFile) return alert("Select a file");
-
-  //   const data = new FormData();
-  //   data.append("name", formData.name);
-  //   data.append("tags", formData.tags);
-  //   data.append("email", user.email);
-  //   data.append("imageFile", formData.imageFile);
-
-  //   try {
-  //     setIsUploading(true);
-
-  //     const res = await axios.post("/api/v1/files/upload-image", data, {
-  //       withCredentials: true,
-  //     });
-
-  //     alert("Upload successful");
-  //     setImages((prev) => [...prev, res.data.file]);
-  //     setFormData({ name: "", tags: "", imageFile: null });
-  //   } catch (error) {
-  //     alert("Upload failed");
-  //     console.error(error);
-  //   } finally {
-  //     setIsUploading(false);
-  //   }
-  // };
-
   const handleUpload = async (e) => {
     e.preventDefault();
     if (!formData.imageFile) return alert("Select a file");

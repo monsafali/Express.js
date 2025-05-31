@@ -1,0 +1,12 @@
+ make-connection to the cloud
+ ssh -i id_rsa username@instance-ip-address
+
+cp-your folder to the cloud
+ scp -i id_rsa mydirector username@instance-ip-address
+
+build the docker compose  this make the images
+docker-compose build
+
+then run this command the will make the docker container on running stage
+docker-compose up -d
+

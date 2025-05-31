@@ -45,11 +45,13 @@ export const imageUploader = async (req, res) => {
       tags,
       email,
       imageUrl: response.secure_url,
+      public_id: response.public_id,
     });
 
     res.status(200).json({
       success: true,
       imageUrl: response.secure_url,
+      file: fileData,
       message: "image succesfuly uploaed ",
     });
   } catch (error) {
@@ -69,5 +71,14 @@ export const getUserImages = async (req, res) => {
     res.status(200).json({ success: true, files });
   } catch (error) {
     res.status(500).json({ success: false, message: "Failed to fetch images" });
+  }
+};
+
+export const DeleteFile = async (req, res) => {
+  try {
+    const deleted = await File.findByIdAndDelete(req.params.id);
+    res.json({ success: true, deleted });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Delete failed" });
   }
 };
