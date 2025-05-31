@@ -7,6 +7,6 @@ cp-your folder to the cloud
 build the docker compose  this make the images
 docker-compose build
 
-then run this command the will make the docker container on running stage
+@then run this command the will make the docker container on running stage
 docker-compose up -d
 
