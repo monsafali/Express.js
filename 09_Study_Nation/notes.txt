@@ -1,4 +1,4 @@
-
+diceBear profile pic from firstname and lastname api
 https://github.com/AnishAwadh/StudyNotion?tab=readme-ov-file
 
 https://www.figma.com/design/Mikd0FjHKAofUlWQSi70nf/StudyNotion_shared?node-id=1-5&p=f&t=7ERwdprqwFjyBsrL-0
