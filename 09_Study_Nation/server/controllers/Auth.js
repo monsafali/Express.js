@@ -95,7 +95,7 @@ exports.signUp = async (req, res) => {
           "Password and confirm Password value does nto match, pleas try again",
       });
     }
-    // Check user already exist or not\
+    // Check user already exist or not
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
@@ -231,5 +231,3 @@ exports.changePassword = async (req, res) => {
   // Send mail - password updated successuly
   // return respone
 };
-
-110;
