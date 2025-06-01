@@ -2,7 +2,8 @@ const User = require("../models/User");
 const OTP = require("../models/OTP");
 const otpGenerator = require("otp-generator");
 const bcrypt = require("bcrypt");
-
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 // Generate OTP
 exports.sendOtp = async (req, res) => {
   try {
@@ -175,9 +176,60 @@ exports.login = async (req, res) => {
 
     // User Check is exist or not
     const user = await User.findOne({ email }).populate("additionDetails");
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "user is niot register please signup first",
+      });
+    }
 
     // if user is right then generate JWT after match password
-    // create cookie and send response
-  } catch (error) {}
+    if (await bcrypt.compare(password, user.password)) {
+      const payload = {
+        email: user.email,
+        id: user._id,
+        role: user.role,
+      };
+      const token = jwt.sign(payload, process.env.JWT_SECRET, {
+        expireIn: "2h",
+      });
+      user.token = token;
+      user.password = undefined;
+
+      // create cookie and send response
+      const options = {
+        expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+        httpOnly: true,
+      };
+      res.cookie("token", token, options).status(200).json({
+        success: true,
+        token,
+        user,
+        message: "Logged In Successfuly",
+      });
+    } else {
+      return res.status(401).json({
+        success: false,
+        message: "Password is incorrect",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Login Failure, please try again",
+    });
+  }
 };
 // Change password
+
+exports.changePassword = async (req, res) => {
+  // Get data from req boyd
+  // Get oldPassword, newPassword, confirmNewPassword
+  // Validation on it
+  // update password update in Database
+  // Send mail - password updated successuly
+  // return respone
+};
+
+110;
