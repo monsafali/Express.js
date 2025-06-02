@@ -41,6 +41,12 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    toke: {
+      type: String,
+    },
+    resetPasswordExpires: {
+      type: Date,
+    },
     courseProgress: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -53,7 +59,3 @@ const userSchema = new mongoose.Schema(
 
 const User = mongoose.model("User", userSchema);
 module.exports = User;
-
-
-
-116 minute
