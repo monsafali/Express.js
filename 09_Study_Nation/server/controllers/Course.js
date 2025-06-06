@@ -34,6 +34,8 @@ exports.createCourse = async (req, res) => {
     const instructorDetails = await User.findById(userId);
     console.log("Insturctor detail is", instructorDetails);
 
+    // Todo veify that userdi and instructionDetail.Id or same or different
+
     if (!instructorDetails) {
       res.status(404).json({
         success: false,
@@ -67,9 +69,58 @@ exports.createCourse = async (req, res) => {
     });
 
     // Add the new course to the user Schema of Instructor
-
-    await User.findByIdAndUpdate();
+    await User.findByIdAndUpdate(
+      {
+        _id: instructorDetails,
+      },
+      {
+        $push: {
+          courses: newCourse._id,
+        },
+      },
+      { new: true }
+    );
+    return res.status(200).json({
+      success: true,
+      message: "Course Created Successfuly",
+      data: newCourse,
+    });
   } catch (error) {
-    return res.status(500).json({});
+    console.log("Error is ", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to create course",
+      error: error.message,
+    });
+  }
+};
+
+// get all course handler funtion
+
+exports.showAllCourses = async (req, res) => {
+  try {
+    const allCourses = await Course.find(
+      {},
+      {
+        courseName: true,
+        price: true,
+        thumbnail: true,
+        instructor: true,
+        ratingAndReviews: true,
+        studentsEnrolled: true,
+      }
+    ).populate("Instructor");
+
+    return res.status(200).json({
+      success: true,
+      message: "Data for all course fetch successfuly",
+      data: allCourses,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Cannot Fetch course data",
+      error: error.message,
+    });
   }
 };
