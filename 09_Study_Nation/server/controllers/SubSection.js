@@ -21,7 +21,34 @@ exports.createSubSection = async (req, res) => {
       process.env.FOLDER_NAME
     );
     // create a sub section
+    const SubSectionDetails = await SubSection.create({
+      title: title,
+      timeDuration: timeDuration,
+      description: description,
+      videoUrl: uploadDetails.secure_url,
+    });
     // update section with thsi sub section objectId
+    const updateSection = await Section.findByIdAndUpdate(
+      sectionId,
+      {
+        $push: {
+          subSection: SubSectionDetails._id,
+        },
+      },
+      { new: true }
+    );
+    // HW log updated sectioh here after adding populate query
+
     // return response
-  } catch (error) {}
+    return res.status(200).json({
+      success: true,
+      message: "Sub section created successfuly",
+      updateSection,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 };
